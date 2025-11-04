@@ -1,0 +1,442 @@
+.App {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #E3F2FD 0%, #BBDEFB 100%);
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.container {
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+.header-icon {
+  position: relative;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.wifi-icon {
+  font-size: 1.5rem;
+  margin-bottom: -5px;
+  z-index: 2;
+}
+
+.car-icon {
+  font-size: 3.5rem;
+  position: relative;
+  z-index: 1;
+}
+
+.header h1 {
+  font-size: 2.5rem;
+  margin: 0.5rem 0;
+  font-weight: 700;
+  color: #1565C0;
+  text-align: center;
+}
+
+.subtitle {
+  font-size: 1rem;
+  color: #424242;
+  margin: 0.5rem 0 0 0;
+  text-align: center;
+  line-height: 1.5;
+}
+
+.form {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+.form-header {
+  margin-bottom: 0.5rem;
+}
+
+.form-header-content {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.form-icon {
+  font-size: 1.25rem;
+}
+
+.form-header h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #212121;
+  margin: 0;
+}
+
+.form-description {
+  font-size: 0.95rem;
+  color: #757575;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-group label {
+  font-weight: 500;
+  color: #424242;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.label-icon {
+  font-size: 1.1rem;
+  display: inline-flex;
+  align-items: center;
+}
+
+.required {
+  color: #E53935;
+  margin-left: 2px;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 0.875rem;
+  font-size: 1rem;
+  border: 1.5px solid #E0E0E0;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+  font-family: inherit;
+  background-color: #FAFAFA;
+  color: #212121;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: #2196F3;
+  background-color: white;
+  box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.1);
+  color: #212121;
+}
+
+.form-group input::placeholder {
+  color: #9E9E9E;
+}
+
+.hint {
+  color: #757575;
+  font-size: 0.85rem;
+  margin-top: 0.25rem;
+  line-height: 1.4;
+}
+
+.btn {
+  padding: 1rem 2rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  margin-top: 0.5rem;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);
+  color: white;
+  box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3);
+}
+
+.btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(33, 150, 243, 0.4);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+.btn-icon {
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.qr-section {
+  display: flex;
+  justify-content: center;
+}
+
+.qr-card {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+.qr-card h2 {
+  color: #212121;
+  margin: 0 0 2rem 0;
+  font-size: 1.75rem;
+  font-weight: 600;
+}
+
+.qr-wrapper {
+  display: flex;
+  justify-content: center;
+  margin: 2rem 0;
+  padding: 1.5rem;
+  background: #f8f9fa;
+  border-radius: 12px;
+  border: 3px solid #e0e0e0;
+}
+
+.user-info {
+  background: #F5F5F5;
+  padding: 1.5rem;
+  border-radius: 12px;
+  margin: 2rem 0;
+  text-align: left;
+}
+
+.info-item {
+  padding: 0.75rem 0;
+  border-bottom: 1px solid #E0E0E0;
+  color: #424242;
+  font-size: 1rem;
+}
+
+.info-item:last-child {
+  border-bottom: none;
+}
+
+.info-item strong {
+  color: #2196F3;
+  display: inline-block;
+  min-width: 80px;
+}
+
+.qr-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin: 2rem 0;
+  flex-wrap: wrap;
+}
+
+.btn-secondary {
+  background: #4CAF50;
+  color: white;
+  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+  width: auto;
+  padding: 0.875rem 1.5rem;
+}
+
+.btn-secondary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(76, 175, 80, 0.4);
+  background: #45a049;
+}
+
+.btn-outline {
+  background: transparent;
+  color: #2196F3;
+  border: 2px solid #2196F3;
+  width: auto;
+  padding: 0.875rem 1.5rem;
+}
+
+.btn-outline:hover {
+  background: #2196F3;
+  color: white;
+  transform: translateY(-1px);
+}
+
+.instructions {
+  margin-top: 2rem;
+  padding: 1.5rem;
+  background: #E3F2FD;
+  border-radius: 12px;
+  border-left: 4px solid #2196F3;
+}
+
+.instruction-text {
+  margin: 0;
+  color: #1565C0;
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+/* Mobile devices (320px - 640px) */
+@media (max-width: 640px) {
+  .App {
+    padding: 1rem 0.5rem;
+  }
+
+  .container {
+    padding: 0 0.5rem;
+  }
+
+  .header {
+    margin-bottom: 1.5rem;
+  }
+
+  .header h1 {
+    font-size: 1.75rem;
+  }
+
+  .subtitle {
+    font-size: 0.9rem;
+    padding: 0 0.5rem;
+  }
+
+  .car-icon {
+    font-size: 2.5rem;
+  }
+
+  .wifi-icon {
+    font-size: 1.25rem;
+  }
+
+  .form,
+  .qr-card {
+    padding: 1.25rem;
+    border-radius: 12px;
+  }
+
+  .form-header h2 {
+    font-size: 1.25rem;
+  }
+
+  .form-description {
+    font-size: 0.85rem;
+  }
+
+  .qr-wrapper {
+    padding: 1rem;
+  }
+
+  .qr-wrapper canvas {
+    max-width: 100%;
+    height: auto;
+  }
+
+  .qr-actions {
+    flex-direction: column;
+  }
+
+  .btn-secondary,
+  .btn-outline {
+    width: 100%;
+  }
+}
+
+/* Tablet devices (641px - 1024px) */
+@media (min-width: 641px) and (max-width: 1024px) {
+  .App {
+    padding: 2rem 2rem;
+  }
+
+  .container {
+    width: 100%;
+    max-width: 100%;
+    padding: 0;
+  }
+
+  .form,
+  .qr-card {
+    padding: 2rem;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .header h1 {
+    font-size: 2.25rem;
+  }
+}
+
+/* Laptop and Desktop (1025px and above) */
+@media (min-width: 1025px) {
+  .App {
+    padding: 2rem 3rem;
+  }
+
+  .container {
+    width: 100%;
+    max-width: 100%;
+    padding: 0;
+  }
+
+  .form,
+  .qr-card {
+    padding: 2.5rem;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .header h1 {
+    font-size: 2.5rem;
+  }
+
+  .subtitle {
+    font-size: 1.1rem;
+  }
+}
+
+/* Large Desktop (1440px and above) */
+@media (min-width: 1440px) {
+  .App {
+    padding: 2rem 4rem;
+  }
+
+  .container {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .form,
+  .qr-card {
+    padding: 3rem;
+    width: 100%;
+    max-width: 100%;
+  }
+}
