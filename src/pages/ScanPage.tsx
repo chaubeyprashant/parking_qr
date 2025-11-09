@@ -1,38 +1,42 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getQRCodeInfo, initiateCall } from '../services/api';
+import type { QRCodeInfo, CallResponse } from '../types/api';
 import './ScanPage.css';
 
 function ScanPage() {
-  const { qrId } = useParams();
+  const { qrId } = useParams<{ qrId: string }>();
   const navigate = useNavigate();
-  const [qrInfo, setQrInfo] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [calling, setCalling] = useState(false);
-  const [error, setError] = useState('');
-  const [callInitiated, setCallInitiated] = useState(false);
-  const [callResult, setCallResult] = useState(null);
+  const [qrInfo, setQrInfo] = useState<QRCodeInfo | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [calling, setCalling] = useState<boolean>(false);
+  const [error, setError] = useState<string>('');
+  const [callInitiated, setCallInitiated] = useState<boolean>(false);
+  const [callResult, setCallResult] = useState<CallResponse | null>(null);
 
   useEffect(() => {
     const fetchQRInfo = async () => {
+      if (!qrId) return;
+      
       try {
         setLoading(true);
         const info = await getQRCodeInfo(qrId);
         setQrInfo(info);
         setError('');
       } catch (err) {
-        setError(err.message || 'QR code not found');
+        const errorMessage = err instanceof Error ? err.message : 'QR code not found';
+        setError(errorMessage);
       } finally {
         setLoading(false);
       }
     };
 
-    if (qrId) {
-      fetchQRInfo();
-    }
+    fetchQRInfo();
   }, [qrId]);
 
   const handleCall = async () => {
+    if (!qrId) return;
+    
     try {
       setCalling(true);
       setError('');
@@ -50,7 +54,8 @@ function ScanPage() {
         console.log('Call would be initiated to masked number:', result.maskedNumber);
       }
     } catch (err) {
-      setError(err.message || 'Failed to initiate call. Please try again.');
+      const errorMessage = err instanceof Error ? err.message : 'Failed to initiate call. Please try again.';
+      setError(errorMessage);
     } finally {
       setCalling(false);
     }

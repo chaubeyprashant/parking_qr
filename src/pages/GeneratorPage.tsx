@@ -1,26 +1,33 @@
-import { useState } from 'react';
+import { useState, ChangeEvent, FormEvent } from 'react';
 import { QRCodeCanvas } from 'qrcode.react';
 import { getUserInfo, generateQRCode, upgradeToPremium } from '../services/api';
+import type { User, UserFormData, GenerateQRResponse } from '../types/api';
 import '../App.css';
 
+interface Achievement {
+  id: string;
+  text: string;
+  icon: string;
+}
+
 function GeneratorPage() {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<UserFormData>({
     name: '',
     email: '',
     address: '',
     phone: ''
   });
-  const [qrValue, setQrValue] = useState('');
-  const [showQR, setShowQR] = useState(false);
-  const [userInfo, setUserInfo] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [showUpgrade, setShowUpgrade] = useState(false);
-  const [upgrading, setUpgrading] = useState(false);
-  const [showCelebration, setShowCelebration] = useState(false);
-  const [achievements, setAchievements] = useState([]);
+  const [qrValue, setQrValue] = useState<string>('');
+  const [showQR, setShowQR] = useState<boolean>(false);
+  const [userInfo, setUserInfo] = useState<User | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string>('');
+  const [showUpgrade, setShowUpgrade] = useState<boolean>(false);
+  const [upgrading, setUpgrading] = useState<boolean>(false);
+  const [showCelebration, setShowCelebration] = useState<boolean>(false);
+  const [achievements, setAchievements] = useState<Achievement[]>([]);
 
-  const handleChange = (e) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
@@ -34,7 +41,7 @@ function GeneratorPage() {
   };
 
   // Check user limits
-  const checkUserLimits = async (email) => {
+  const checkUserLimits = async (email: string) => {
     try {
       const info = await getUserInfo(email);
       setUserInfo(info);
@@ -47,18 +54,20 @@ function GeneratorPage() {
   };
 
   // Check and set achievements
-  const checkAchievements = (info) => {
-    const newAchievements = [];
-    if (info && info.qrCount >= 1) {
+  const checkAchievements = (info: User | null) => {
+    if (!info) return;
+    
+    const newAchievements: Achievement[] = [];
+    if (info.qrCount >= 1) {
       newAchievements.push({ id: 'first', text: '🎉 First QR Code!', icon: '🎉' });
     }
-    if (info && info.qrCount >= 3) {
+    if (info.qrCount >= 3) {
       newAchievements.push({ id: 'three', text: '🔥 3 QR Codes!', icon: '🔥' });
     }
-    if (info && info.qrCount >= 10) {
+    if (info.qrCount >= 10) {
       newAchievements.push({ id: 'ten', text: '⭐ 10 QR Codes!', icon: '⭐' });
     }
-    if (info && info.plan === 'premium') {
+    if (info.plan === 'premium') {
       newAchievements.push({ id: 'premium', text: '💎 Premium Member', icon: '💎' });
     }
     setAchievements(newAchievements);
@@ -88,27 +97,50 @@ function GeneratorPage() {
     return confettiElements;
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
     setError('');
     
     try {
       // Generate QR code via API
-      const result = await generateQRCode(formData);
+      const result: GenerateQRResponse = await generateQRCode(formData);
       
-      if (result.success) {
-        setQrValue(result.qrCode.qrValue);
-        setUserInfo(result.user);
-        setShowQR(true);
-        setError('');
-        setShowUpgrade(false);
-        setShowCelebration(true);
-        checkAchievements(result.user);
-        setTimeout(() => setShowCelebration(false), 3000);
+      // Type-safe check with proper error handling
+      if (!result) {
+        throw new Error('Invalid response from server');
       }
+      
+      if (!result.qrCode) {
+        throw new Error('QR code data is missing from response');
+      }
+      
+      if (!result.qrCode.qrValue) {
+        throw new Error('QR code value is missing');
+      }
+      
+      if (!result.user) {
+        throw new Error('User data is missing from response');
+      }
+      
+      // All checks passed, set the values
+      setQrValue(result.qrCode.qrValue);
+      setUserInfo(result.user);
+      setShowQR(true);
+      setError('');
+      setShowUpgrade(false);
+      setShowCelebration(true);
+      checkAchievements(result.user);
+      setTimeout(() => setShowCelebration(false), 3000);
     } catch (err) {
-      setError(err.message || 'Failed to generate QR code. Please try again.');
+      const errorMessage = err instanceof Error ? err.message : 'Failed to generate QR code. Please try again.';
+      setError(errorMessage);
+      console.error('QR Generation Error:', err);
+      
+      // Check if it's a limit error and show upgrade prompt
+      if (errorMessage.includes('limit reached') || errorMessage.includes('limit')) {
+        setShowUpgrade(true);
+      }
     } finally {
       setLoading(false);
     }
@@ -134,7 +166,7 @@ function GeneratorPage() {
     
     try {
       const result = await upgradeToPremium(formData.email);
-      if (result.success) {
+      if (result && result.plan === 'premium') {
         // Refresh user info
         await checkUserLimits(formData.email);
         setShowUpgrade(false);
@@ -142,7 +174,8 @@ function GeneratorPage() {
         alert('🎉 Successfully upgraded to Premium! You can now generate unlimited QR codes.');
       }
     } catch (err) {
-      setError(err.message || 'Failed to upgrade. Please try again.');
+      const errorMessage = err instanceof Error ? err.message : 'Failed to upgrade. Please try again.';
+      setError(errorMessage);
     } finally {
       setUpgrading(false);
     }
@@ -161,14 +194,14 @@ function GeneratorPage() {
   };
 
   // Calculate progress percentage
-  const getProgressPercentage = () => {
+  const getProgressPercentage = (): number => {
     if (!userInfo) return 0;
     if (userInfo.plan === 'premium') return 100;
     return Math.min((userInfo.qrCount / 3) * 100, 100);
   };
 
   // Get user level
-  const getUserLevel = () => {
+  const getUserLevel = (): number => {
     if (!userInfo) return 1;
     const count = userInfo.qrCount;
     if (count < 3) return 1;
@@ -373,12 +406,14 @@ function GeneratorPage() {
               <h2>Your Parking QR Code</h2>
               <p className="qr-subtitle">Ready to print and place on your vehicle</p>
               <div className="qr-wrapper">
-                <QRCodeCanvas 
-                  value={qrValue} 
-                  size={300}
-                  level="H"
-                  includeMargin={true}
-                />
+                {qrValue && (
+                  <QRCodeCanvas 
+                    value={qrValue} 
+                    size={300}
+                    level="H"
+                    includeMargin={true}
+                  />
+                )}
               </div>
             </div>
 
