@@ -1,70 +1,141 @@
-# Parking QR Code Generator - Backend Server
+# Parking QR Backend Server
 
-## Setup Instructions
+A scalable, well-architected Node.js backend server for the Parking QR Code Generator application.
 
-1. **Install dependencies:**
-   ```bash
-   cd server
-   npm install
-   ```
+## 🏗️ Architecture
 
-2. **Start the server:**
-   ```bash
-   npm start
-   ```
-   
-   Or for development with auto-reload:
-   ```bash
-   npm run dev
-   ```
+The backend follows a clean, layered architecture pattern:
 
-3. **Server will run on:** `http://localhost:3001`
+```
+server/
+├── config/          # Configuration files
+├── controllers/   # Request handlers (HTTP layer)
+├── services/     # Business logic layer
+├── models/       # Data models/schemas
+├── routes/       # API route definitions
+├── middleware/   # Custom middleware (error handling, etc.)
+├── database/     # Database abstraction layer
+└── utils/        # Helper functions and utilities
+```
 
-## API Endpoints
+### Architecture Layers
 
-### Get User Info
-- **GET** `/api/user/:email`
-- Returns user information, plan, and QR code count
+1. **Routes** (`routes/`) - Define API endpoints and map them to controllers
+2. **Controllers** (`controllers/`) - Handle HTTP requests/responses, input validation
+3. **Services** (`services/`) - Contain business logic, orchestrate data operations
+4. **Models** (`models/`) - Data structures and schemas
+5. **Database** (`database/`) - Database abstraction layer (easily switch between JSON, MongoDB, PostgreSQL, etc.)
+6. **Middleware** (`middleware/`) - Error handling, authentication, logging
+7. **Utils** (`utils/`) - Reusable helper functions
+8. **Config** (`config/`) - Application configuration
 
-### Generate QR Code
-- **POST** `/api/qr/generate`
-- Body: `{ email, name, address, phone }`
-- Returns QR code data if within limits
+## 🚀 Getting Started
 
-### Get User's QR Codes
-- **GET** `/api/qr/user/:email`
-- Returns all QR codes for a user
+### Installation
 
-### Upgrade to Premium
-- **POST** `/api/user/upgrade`
-- Body: `{ email, paymentToken }`
-- Upgrades user to premium plan
+```bash
+cd server
+npm install
+```
 
-## Database
+### Running the Server
 
-The server uses a JSON file (`database.json`) for data storage. For production, consider using MongoDB, PostgreSQL, or another database.
+```bash
+# Development mode (with auto-reload)
+npm run dev
 
-## Features
+# Production mode
+npm start
+```
 
-- ✅ Free tier: 3 QR codes per user
-- ✅ Premium tier: Unlimited QR codes
-- ✅ User tracking by email
-- ✅ QR code generation with limits
-- ✅ Premium upgrade functionality
+The server will run on `http://localhost:3001` by default.
 
-## Payment Integration
+## 📡 API Endpoints
 
-Currently, the upgrade endpoint accepts a `paymentToken` parameter but doesn't verify payments. To integrate with a payment gateway:
+### Health Check
+- `GET /api/health` - Server health status
 
-1. Add Stripe, PayPal, or another payment SDK
-2. Verify payment tokens before upgrading
-3. Handle subscription management
-4. Add webhook handlers for payment events
+### User Endpoints
+- `GET /api/user/:email` - Get user information
+- `POST /api/user/upgrade` - Upgrade user to premium
 
+### QR Code Endpoints
+- `POST /api/qr/generate` - Generate a new QR code
+- `GET /api/qr/:qrId` - Get QR code information
 
+### Call Endpoints
+- `POST /api/call/initiate` - Initiate a masked call
 
+## 🔧 Configuration
 
+Configuration is managed in `config/index.js`. You can override settings using environment variables:
 
+- `PORT` - Server port (default: 3001)
+- `NODE_ENV` - Environment (development/production)
+- `DB_TYPE` - Database type (json, mongodb, postgresql)
+- `DB_PATH` - Path to JSON database file (if using JSON)
+- `CORS_ORIGIN` - CORS origin (default: *)
 
+## 📦 Features
 
+- ✅ Clean separation of concerns
+- ✅ Scalable architecture
+- ✅ Easy to switch databases (JSON → MongoDB → PostgreSQL)
+- ✅ Comprehensive error handling
+- ✅ Input validation
+- ✅ Type-safe models
+- ✅ Service layer for business logic
+- ✅ Middleware for cross-cutting concerns
+
+## 🔄 Adding New Features
+
+### 1. Add a new route
+Create a file in `routes/` and add it to `routes/index.js`
+
+### 2. Create a controller
+Add a controller class in `controllers/` that handles HTTP requests
+
+### 3. Implement business logic
+Add service methods in `services/` for business logic
+
+### 4. Define models
+Create model classes in `models/` for data structures
+
+### 5. Update database layer
+If needed, add new methods to the database abstraction in `database/`
+
+## 🗄️ Database
+
+Currently uses JSON file-based storage. The architecture allows easy migration to:
+- MongoDB
+- PostgreSQL
+- MySQL
+- Any other database
+
+Simply implement a new database class in `database/` and update `database/index.js`.
+
+## 🛡️ Error Handling
+
+The application uses custom error classes:
+- `AppError` - Base error class
+- `ValidationError` - Input validation errors (400)
+- `NotFoundError` - Resource not found (404)
+- `ForbiddenError` - Access denied (403)
+
+All errors are handled by the `errorHandler` middleware.
+
+## 📝 Code Style
+
+- ES6 modules (import/export)
+- Async/await for asynchronous operations
+- Class-based architecture
+- Consistent error handling
+- Input validation
+
+## 🔐 Security Considerations
+
+- Input validation on all endpoints
+- CORS configuration
+- Error messages don't expose sensitive information
+- Ready for authentication middleware integration
 
