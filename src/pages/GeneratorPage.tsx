@@ -1,4 +1,4 @@
-import { useState, ChangeEvent, FormEvent } from 'react';
+import { useState, ChangeEvent, FormEvent, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { QRCodeCanvas } from 'qrcode.react';
 import { getUserInfo, generateQRCode, upgradeToPremium } from '../services/api';
@@ -9,6 +9,18 @@ interface Achievement {
   id: string;
   text: string;
   icon: string;
+}
+
+interface QRCodeStyle {
+  id: string;
+  name: string;
+  fgColor: string;
+  bgColor: string;
+  icon: string;
+  gradient?: boolean;
+  emoji?: string;
+  pattern?: string;
+  sticker?: boolean;
 }
 
 function GeneratorPage() {
@@ -28,6 +40,21 @@ function GeneratorPage() {
   const [upgrading, setUpgrading] = useState<boolean>(false);
   const [showCelebration, setShowCelebration] = useState<boolean>(false);
   const [achievements, setAchievements] = useState<Achievement[]>([]);
+  const [selectedStyle, setSelectedStyle] = useState<string>('classic');
+  const qrCodeRef = useRef<HTMLDivElement>(null);
+
+  const qrCodeStyles: QRCodeStyle[] = [
+    { id: 'classic', name: 'Classic', fgColor: '#000000', bgColor: '#FFFFFF', icon: '⚫' },
+    { id: 'car', name: 'Car Sticker', fgColor: '#2196F3', bgColor: '#E3F2FD', icon: '🚗', emoji: '🚗', sticker: true },
+    { id: 'star', name: 'Star Power', fgColor: '#FFD700', bgColor: '#FFF9C4', icon: '⭐', emoji: '⭐', sticker: true },
+    { id: 'heart', name: 'Love It', fgColor: '#E91E63', bgColor: '#FCE4EC', icon: '❤️', emoji: '❤️', sticker: true },
+    { id: 'fire', name: 'On Fire', fgColor: '#FF5722', bgColor: '#FFEBEE', icon: '🔥', emoji: '🔥', sticker: true },
+    { id: 'rainbow', name: 'Rainbow', fgColor: '#667eea', bgColor: '#f093fb', icon: '🌈', emoji: '🌈', sticker: true, gradient: true },
+    { id: 'rocket', name: 'Rocket', fgColor: '#9C27B0', bgColor: '#F3E5F5', icon: '🚀', emoji: '🚀', sticker: true },
+    { id: 'crown', name: 'Royal', fgColor: '#FF9800', bgColor: '#FFF3E0', icon: '👑', emoji: '👑', sticker: true },
+    { id: 'diamond', name: 'Diamond', fgColor: '#00BCD4', bgColor: '#E0F7FA', icon: '💎', emoji: '💎', sticker: true },
+    { id: 'party', name: 'Party', fgColor: '#E91E63', bgColor: '#F8BBD0', icon: '🎉', emoji: '🎉', sticker: true },
+  ];
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -189,10 +216,15 @@ function GeneratorPage() {
     if (canvas) {
       const url = canvas.toDataURL('image/png');
       const link = document.createElement('a');
-      link.download = `parking-qr-${formData.name.replace(/\s/g, '-')}.png`;
+      const styleName = qrCodeStyles.find(s => s.id === selectedStyle)?.name.toLowerCase().replace(/\s/g, '-') || 'classic';
+      link.download = `parking-qr-${formData.name.replace(/\s/g, '-')}-${styleName}.png`;
       link.href = url;
       link.click();
     }
+  };
+
+  const getCurrentStyle = (): QRCodeStyle => {
+    return qrCodeStyles.find(s => s.id === selectedStyle) || qrCodeStyles[0];
   };
 
   // Calculate progress percentage
@@ -406,15 +438,66 @@ function GeneratorPage() {
             {/* QR Code Card */}
             <div className="qr-code-card">
               <h2>Your Parking QR Code</h2>
-              <p className="qr-subtitle">Ready to print and place on your vehicle</p>
-              <div className="qr-wrapper">
+              <p className="qr-subtitle">Choose a style and download your QR code</p>
+              
+              {/* Style Selector */}
+              <div className="qr-style-selector">
+                <label className="style-selector-label">Choose Style:</label>
+                <div className="style-options">
+                  {qrCodeStyles.map((style) => (
+                    <button
+                      key={style.id}
+                      type="button"
+                      className={`style-option ${selectedStyle === style.id ? 'active' : ''}`}
+                      onClick={() => setSelectedStyle(style.id)}
+                      title={style.name}
+                    >
+                      <span className="style-icon">{style.icon}</span>
+                      <span className="style-name">{style.name}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="qr-wrapper" ref={qrCodeRef}>
                 {qrValue && (
-                  <QRCodeCanvas 
-                    value={qrValue} 
-                    size={300}
-                    level="H"
-                    includeMargin={true}
-                  />
+                  <div 
+                    className={`qr-code-container ${getCurrentStyle().sticker ? 'qr-sticker' : ''}`}
+                    style={{
+                      backgroundColor: getCurrentStyle().bgColor,
+                      padding: getCurrentStyle().sticker ? '30px 20px' : '20px',
+                      borderRadius: getCurrentStyle().sticker ? '24px' : '16px',
+                      boxShadow: getCurrentStyle().sticker 
+                        ? '0 8px 24px rgba(0, 0, 0, 0.15), 0 0 0 4px rgba(255, 255, 255, 0.5)' 
+                        : '0 4px 12px rgba(0, 0, 0, 0.1)',
+                      position: 'relative',
+                      display: 'inline-block',
+                      border: getCurrentStyle().sticker ? '3px dashed rgba(0, 0, 0, 0.1)' : 'none',
+                    }}
+                  >
+                    {getCurrentStyle().sticker && getCurrentStyle().emoji && (
+                      <>
+                        <div className="qr-emoji-top">{getCurrentStyle().emoji}</div>
+                        <div className="qr-emoji-bottom">{getCurrentStyle().emoji}</div>
+                        <div className="qr-emoji-left">{getCurrentStyle().emoji}</div>
+                        <div className="qr-emoji-right">{getCurrentStyle().emoji}</div>
+                      </>
+                    )}
+                    <QRCodeCanvas 
+                      value={qrValue} 
+                      size={280}
+                      level="H"
+                      includeMargin={true}
+                      fgColor={getCurrentStyle().fgColor}
+                      bgColor={getCurrentStyle().bgColor}
+                    />
+                    {getCurrentStyle().sticker && (
+                      <div className="qr-sticker-label">
+                        <span className="sticker-emoji">{getCurrentStyle().emoji}</span>
+                        <span className="sticker-text">PARKING QR</span>
+                      </div>
+                    )}
+                  </div>
                 )}
               </div>
             </div>

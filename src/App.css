@@ -564,6 +564,217 @@
   animation: scaleIn 0.8s ease-out 0.3s both;
 }
 
+.qr-code-container {
+  position: relative;
+  display: inline-block;
+  transition: transform 0.3s ease;
+}
+
+.qr-code-container:hover {
+  transform: scale(1.02);
+}
+
+.qr-sticker {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.7) 100%) !important;
+  backdrop-filter: blur(10px);
+  animation: stickerFloat 3s ease-in-out infinite;
+}
+
+@keyframes stickerFloat {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-5px) rotate(1deg);
+  }
+}
+
+.qr-emoji-top,
+.qr-emoji-bottom,
+.qr-emoji-left,
+.qr-emoji-right {
+  position: absolute;
+  font-size: 2rem;
+  z-index: 1;
+  animation: emojiBounce 2s ease-in-out infinite;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+}
+
+.qr-emoji-top {
+  top: -15px;
+  left: 50%;
+  transform: translateX(-50%);
+  animation-delay: 0s;
+}
+
+.qr-emoji-bottom {
+  bottom: -15px;
+  left: 50%;
+  transform: translateX(-50%);
+  animation-delay: 0.5s;
+}
+
+.qr-emoji-left {
+  left: -15px;
+  top: 50%;
+  transform: translateY(-50%);
+  animation-delay: 1s;
+}
+
+.qr-emoji-right {
+  right: -15px;
+  top: 50%;
+  transform: translateY(-50%);
+  animation-delay: 1.5s;
+}
+
+@keyframes emojiBounce {
+  0%, 100% {
+    transform: translateX(-50%) translateY(0) scale(1);
+  }
+  50% {
+    transform: translateX(-50%) translateY(-8px) scale(1.1);
+  }
+}
+
+.qr-emoji-bottom {
+  animation-name: emojiBounceBottom;
+}
+
+@keyframes emojiBounceBottom {
+  0%, 100% {
+    transform: translateX(-50%) translateY(0) scale(1);
+  }
+  50% {
+    transform: translateX(-50%) translateY(8px) scale(1.1);
+  }
+}
+
+.qr-emoji-left {
+  animation-name: emojiBounceLeft;
+}
+
+.qr-emoji-right {
+  animation-name: emojiBounceRight;
+}
+
+@keyframes emojiBounceLeft {
+  0%, 100% {
+    transform: translateY(-50%) translateX(0) scale(1);
+  }
+  50% {
+    transform: translateY(-50%) translateX(-8px) scale(1.1);
+  }
+}
+
+@keyframes emojiBounceRight {
+  0%, 100% {
+    transform: translateY(-50%) translateX(0) scale(1);
+  }
+  50% {
+    transform: translateY(-50%) translateX(8px) scale(1.1);
+  }
+}
+
+.qr-sticker-label {
+  position: absolute;
+  bottom: -35px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(255, 255, 255, 0.95);
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  font-weight: 700;
+  font-size: 0.85rem;
+  white-space: nowrap;
+  z-index: 2;
+}
+
+.sticker-emoji {
+  font-size: 1.2rem;
+  animation: emojiSpin 3s linear infinite;
+}
+
+@keyframes emojiSpin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.sticker-text {
+  color: #212121;
+  letter-spacing: 1px;
+}
+
+.qr-style-selector {
+  margin: 1.5rem 0;
+  padding: 1rem 0;
+}
+
+.style-selector-label {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #212121;
+  margin-bottom: 0.75rem;
+  text-align: center;
+}
+
+.style-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+  align-items: center;
+}
+
+.style-option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.75rem 1rem;
+  background: #ffffff;
+  border: 2px solid #E0E0E0;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 80px;
+  font-size: 0.85rem;
+}
+
+.style-option:hover {
+  border-color: #2196F3;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(33, 150, 243, 0.2);
+}
+
+.style-option.active {
+  border-color: #2196F3;
+  background: #E3F2FD;
+  box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3);
+  transform: translateY(-2px);
+}
+
+.style-icon {
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+.style-name {
+  font-weight: 600;
+  color: #212121;
+  font-size: 0.75rem;
+  text-align: center;
+}
+
 .qr-wrapper canvas {
   transition: transform 0.3s ease;
   border-radius: 12px;
@@ -1214,6 +1425,54 @@
 
   .qr-actions {
     flex-direction: column;
+  }
+
+  .style-options {
+    gap: 0.5rem;
+  }
+
+  .style-option {
+    min-width: 70px;
+    padding: 0.5rem 0.75rem;
+  }
+
+  .style-icon {
+    font-size: 1.25rem;
+  }
+
+  .style-name {
+    font-size: 0.7rem;
+  }
+
+  .qr-code-container {
+    padding: 15px !important;
+  }
+
+  .qr-wrapper canvas {
+    width: 100% !important;
+    max-width: 280px !important;
+    height: auto !important;
+  }
+  
+  .qr-code-card {
+    padding: 1.5rem !important;
+  }
+
+  .qr-emoji-top,
+  .qr-emoji-bottom,
+  .qr-emoji-left,
+  .qr-emoji-right {
+    font-size: 1.5rem;
+  }
+
+  .qr-sticker-label {
+    bottom: -30px;
+    padding: 0.4rem 0.75rem;
+    font-size: 0.75rem;
+  }
+
+  .sticker-emoji {
+    font-size: 1rem;
   }
 
   .btn-primary,
