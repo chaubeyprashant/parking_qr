@@ -15,8 +15,9 @@ export const config = {
     version: 'v1'
   },
   database: {
-    type: process.env.DB_TYPE || 'json', // json, mongodb, postgresql
-    path: process.env.DB_PATH || path.join(__dirname, '../database.json')
+    type: process.env.DB_TYPE || (process.env.MONGODB_URI ? 'mongodb' : 'json'), // json, mongodb, postgresql
+    path: process.env.DB_PATH || path.join(__dirname, '../database.json'),
+    connectionString: process.env.MONGODB_URI || process.env.MONGODB_URL
   },
   limits: {
     free: {
@@ -29,6 +30,12 @@ export const config = {
   cors: {
     origin: process.env.CORS_ORIGIN || '*',
     credentials: true
+  },
+  twilio: {
+    accountSid: process.env.TWILIO_ACCOUNT_SID,
+    authToken: process.env.TWILIO_AUTH_TOKEN,
+    phoneNumber: process.env.TWILIO_PHONE_NUMBER, // Your Twilio phone number
+    enabled: !!process.env.TWILIO_ACCOUNT_SID
   }
 };
 

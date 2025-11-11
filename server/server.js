@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import { config } from './config/index.js';
+import { initDatabase } from './database/index.js';
 import routes from './routes/index.js';
 import { errorHandler } from './middleware/errorHandler.js';
 import { notFound } from './middleware/notFound.js';
@@ -32,11 +33,27 @@ app.use(errorHandler);
 // Start server
 const PORT = config.port;
 
-app.listen(PORT, () => {
-  console.log(`🚀 Server running on http://localhost:${PORT}`);
-  console.log(`📊 API available at http://localhost:${PORT}${config.api.prefix}`);
-  console.log(`🌍 Environment: ${config.nodeEnv}`);
-  console.log(`💾 Database: ${config.database.type}`);
-});
+// Initialize database connection before starting server
+const startServer = async () => {
+  try {
+    // Initialize database (MongoDB or JSON)
+    await initDatabase();
+    
+    app.listen(PORT, () => {
+      console.log(`🚀 Server running on http://localhost:${PORT}`);
+      console.log(`📊 API available at http://localhost:${PORT}${config.api.prefix}`);
+      console.log(`🌍 Environment: ${config.nodeEnv}`);
+      console.log(`💾 Database: ${config.database.type}`);
+      if (config.database.type === 'mongodb') {
+        console.log(`🔗 MongoDB: Connected`);
+      }
+    });
+  } catch (error) {
+    console.error('Failed to start server:', error);
+    process.exit(1);
+  }
+};
+
+startServer();
 
 export default app;

@@ -1,4 +1,5 @@
 import { useState, ChangeEvent, FormEvent } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { QRCodeCanvas } from 'qrcode.react';
 import { getUserInfo, generateQRCode, upgradeToPremium } from '../services/api';
 import type { User, UserFormData, GenerateQRResponse } from '../types/api';
@@ -11,6 +12,7 @@ interface Achievement {
 }
 
 function GeneratorPage() {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState<UserFormData>({
     name: '',
     email: '',
@@ -200,14 +202,14 @@ function GeneratorPage() {
     return Math.min((userInfo.qrCount / 3) * 100, 100);
   };
 
-  // Get user level
-  const getUserLevel = (): number => {
-    if (!userInfo) return 1;
+  // Get user tier/badge
+  const getUserTier = (): string => {
+    if (!userInfo) return 'Starter';
     const count = userInfo.qrCount;
-    if (count < 3) return 1;
-    if (count < 10) return 2;
-    if (count < 25) return 3;
-    return 4;
+    if (count < 3) return 'Starter';
+    if (count < 10) return 'Active';
+    if (count < 25) return 'Pro';
+    return 'Expert';
   };
 
   return (
@@ -219,30 +221,32 @@ function GeneratorPage() {
       )}
       <div className="container">
         <header className="header">
-          <div className="car-icon-single">🚗</div>
-          <h1>Parking QR Generator</h1>
-          <p className="subtitle">Create a smart QR code for your vehicle. One scan, instant call.</p>
-          {userInfo && (
-            <div className="level-indicator" style={{ marginTop: '1rem' }}>
-              <span className="level-icon">⭐</span>
-              <span>Level {getUserLevel()} Explorer</span>
-            </div>
-          )}
+          <div className="header-top">
+            <h1 className="logo-link" onClick={() => navigate('/')} style={{ cursor: 'pointer' }}>
+              Parking QR
+            </h1>
+            <button 
+              onClick={() => navigate('/')} 
+              className="home-link"
+              title="Back to Home"
+            >
+              ← Home
+            </button>
+          </div>
         </header>
 
         {!showQR ? (
           <form onSubmit={handleSubmit} className="form">
             <div className="form-header">
+              <div className="form-icon">🚗</div>
               <div className="form-header-content">
-                <span className="form-icon">👤</span>
-                <h2>Your Information</h2>
+                <h2>Vehicle Registration</h2>
+                <p className="form-description">Please fill in your details below</p>
               </div>
-              <p className="form-description">Fill in your details to generate your personalized parking QR code</p>
             </div>
 
             <div className="form-group">
               <label htmlFor="name">
-                <span className="label-icon">👤</span>
                 Full Name <span className="required">*</span>
               </label>
               <input
@@ -258,7 +262,6 @@ function GeneratorPage() {
 
             <div className="form-group">
               <label htmlFor="email">
-                <span className="label-icon">✉️</span>
                 Email Address <span className="required">*</span>
               </label>
               <input
@@ -306,38 +309,38 @@ function GeneratorPage() {
               )}
             </div>
 
-            <div className="form-group">
-              <label htmlFor="address">
-                <span className="label-icon">📍</span>
-                Address <span className="required">*</span>
-              </label>
-              <input
-                id="address"
-                name="address"
-                type="text"
-                value={formData.address}
-                onChange={handleChange}
-                placeholder="123 Main St, City, State"
-                required
-              />
-            </div>
+            <div className="form-row">
+              <div className="form-group form-group-half">
+                <label htmlFor="address">
+                  Address <span className="required">*</span>
+                </label>
+                <input
+                  id="address"
+                  name="address"
+                  type="text"
+                  value={formData.address}
+                  onChange={handleChange}
+                  placeholder="123 Main St, City, State"
+                  required
+                />
+              </div>
 
-            <div className="form-group">
-              <label htmlFor="phone">
-                <span className="label-icon">📞</span>
-                Phone Number <span className="required">*</span>
-              </label>
-              <input
-                id="phone"
-                name="phone"
-                type="tel"
-                value={formData.phone}
-                onChange={handleChange}
-                placeholder="+1 (555) 123-4567"
-                required
-              />
-              <small className="hint">This number will be called when someone scans your QR code</small>
+              <div className="form-group form-group-half">
+                <label htmlFor="phone">
+                  Phone Number <span className="required">*</span>
+                </label>
+                <input
+                  id="phone"
+                  name="phone"
+                  type="tel"
+                  value={formData.phone}
+                  onChange={handleChange}
+                  placeholder="+1 (555) 123-4567"
+                  required
+                />
+              </div>
             </div>
+            <small className="hint" style={{ marginTop: '-0.5rem', marginBottom: '0.5rem' }}>This number will be called when someone scans your QR code</small>
 
             {error && (
               <div className="error-message">
@@ -348,7 +351,7 @@ function GeneratorPage() {
             {showUpgrade && userInfo && userInfo.plan === 'free' && (
               <div className="upgrade-prompt">
                 <h3>🚀 Upgrade to Premium</h3>
-                <p>You've reached the free limit of 3 QR codes. Upgrade to premium for unlimited QR codes!</p>
+                <p>You've reached the basic plan limit of 3 QR codes. Upgrade to premium for unlimited QR codes!</p>
                 <div className="upgrade-features">
                   <div className="feature">✅ Unlimited QR codes</div>
                   <div className="feature">✅ Priority support</div>
@@ -370,8 +373,7 @@ function GeneratorPage() {
               className="btn btn-primary"
               disabled={loading}
             >
-              <span className="btn-icon">✓</span>
-              {loading ? 'Generating...' : 'Generate QR Code'}
+              {loading ? 'Generating...' : 'Submit Registration'}
             </button>
           </form>
         ) : (
@@ -391,12 +393,12 @@ function GeneratorPage() {
                   <div className="stat-label">QR Codes</div>
                 </div>
                 <div className="stat-card">
-                  <div className="stat-value">{getUserLevel()}</div>
-                  <div className="stat-label">Level</div>
+                  <div className="stat-value">{getUserTier()}</div>
+                  <div className="stat-label">Tier</div>
                 </div>
                 <div className="stat-card">
-                  <div className="stat-value">{userInfo.plan === 'premium' ? '💎' : '🆓'}</div>
-                  <div className="stat-label">{userInfo.plan === 'premium' ? 'Premium' : 'Free'}</div>
+                  <div className="stat-value">{userInfo.plan === 'premium' ? '💎' : '📦'}</div>
+                  <div className="stat-label">{userInfo.plan === 'premium' ? 'Premium' : 'Basic'}</div>
                 </div>
               </div>
             )}

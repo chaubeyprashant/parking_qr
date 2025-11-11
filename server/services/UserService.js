@@ -5,18 +5,18 @@ import { config } from '../config/index.js';
 
 export class UserService {
   async getOrCreateUser(email, name) {
-    let user = db.findUserByEmail(email);
+    let user = await db.findUserByEmail(email);
     
     if (!user) {
       const newUser = new User({ email, name });
-      user = db.createUser(newUser.toJSON());
+      user = await db.createUser(newUser.toJSON());
     }
     
     return new User(user);
   }
 
   async getUserByEmail(email) {
-    const user = db.findUserByEmail(email);
+    const user = await db.findUserByEmail(email);
     if (!user) {
       return null;
     }
@@ -34,7 +34,7 @@ export class UserService {
       };
     }
 
-    const qrCount = db.getUserQRCount(user.id);
+    const qrCount = await db.getUserQRCount(user.id);
     
     return {
       exists: true,
@@ -52,7 +52,7 @@ export class UserService {
       throw new NotFoundError('User');
     }
 
-    const updated = db.updateUser(email, { plan: 'premium' });
+    const updated = await db.updateUser(email, { plan: 'premium' });
     
     if (!updated) {
       throw new NotFoundError('User');

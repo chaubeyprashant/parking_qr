@@ -44,6 +44,9 @@ export interface CallResponse {
   maskedNumber?: string;
   ownerPhone?: string;
   note?: string;
+  requiresPhoneNumber?: boolean;
+  callSid?: string;
+  status?: string;
 }
 
 export interface UserFormData {
