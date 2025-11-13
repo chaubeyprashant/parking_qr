@@ -69,15 +69,29 @@ export class MongoDatabase {
       const mongoose = (await import('mongoose')).default;
       let userId = qrData.userId;
       
-      // If userId is a string and not an ObjectId, try to find user by email/id and get their _id
-      if (typeof userId === 'string' && !mongoose.Types.ObjectId.isValid(userId)) {
-        // Try to find user by the string ID
-        const { UserModel } = await import('../models/UserModel.js');
-        const user = await UserModel.findById(userId) || await UserModel.findOne({ id: userId });
-        if (user) {
-          userId = user._id;
+      // Convert userId to ObjectId
+      if (typeof userId === 'string') {
+        // If it's a valid ObjectId string, convert it to ObjectId
+        if (mongoose.Types.ObjectId.isValid(userId)) {
+          userId = new mongoose.Types.ObjectId(userId);
+        } else {
+          // If not a valid ObjectId, try to find user by email/id and get their _id
+          const { UserModel } = await import('../models/UserModel.js');
+          const user = await UserModel.findById(userId) || await UserModel.findOne({ id: userId });
+          if (user) {
+            userId = user._id;
+          } else {
+            throw new Error(`User not found with ID: ${userId}`);
+          }
         }
       }
+      
+      // Validate required fields
+      if (!qrData.name || !qrData.email || !qrData.address || !qrData.phone) {
+        throw new Error('Missing required fields: name, email, address, or phone');
+      }
+      
+      console.log('Creating QR code with userId:', userId, 'email:', qrData.email);
       
       const qrCode = new QRCodeModel({
         userId: userId,
@@ -87,7 +101,10 @@ export class MongoDatabase {
         address: qrData.address,
         phone: qrData.phone
       });
+      
       const savedQR = await qrCode.save();
+      console.log('QR code saved successfully with _id:', savedQR._id);
+      
       const result = savedQR.toJSON();
       
       // Update qrValue to use the MongoDB _id
@@ -98,12 +115,21 @@ export class MongoDatabase {
           result.qrValue = `${urlMatch[1]}/scan/${result.id}`;
           // Update in database
           await QRCodeModel.findByIdAndUpdate(savedQR._id, { qrValue: result.qrValue });
+          console.log('QR code value updated to:', result.qrValue);
         }
       }
       
       return result;
     } catch (error) {
       console.error('Error creating QR code:', error);
+      console.error('QR Data received:', {
+        userId: qrData.userId,
+        name: qrData.name,
+        email: qrData.email,
+        address: qrData.address,
+        phone: qrData.phone,
+        qrValue: qrData.qrValue
+      });
       throw error;
     }
   }

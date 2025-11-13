@@ -40,8 +40,9 @@ const startServer = async () => {
     await initDatabase();
     
     app.listen(PORT, () => {
-      console.log(`🚀 Server running on http://localhost:${PORT}`);
-      console.log(`📊 API available at http://localhost:${PORT}${config.api.prefix}`);
+      const serverUrl = process.env.BASE_URL || `http://localhost:${PORT}`;
+      console.log(`🚀 Server running on ${serverUrl}`);
+      console.log(`📊 API available at ${serverUrl}${config.api.prefix}`);
       console.log(`🌍 Environment: ${config.nodeEnv}`);
       console.log(`💾 Database: ${config.database.type}`);
       if (config.database.type === 'mongodb') {

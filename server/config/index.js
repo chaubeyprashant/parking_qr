@@ -21,7 +21,7 @@ export const config = {
   },
   limits: {
     free: {
-      qrCodes: 3
+      qrCodes: 3000
     },
     premium: {
       qrCodes: Infinity

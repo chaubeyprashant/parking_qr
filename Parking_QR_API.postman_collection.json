@@ -1,0 +1,190 @@
+{
+	"info": {
+		"name": "Parking QR API",
+		"description": "API collection for Parking QR Code Generator",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Health Check",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/health",
+					"host": ["{{base_url}}"],
+					"path": ["health"]
+				}
+			}
+		},
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "Get User Info",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/user/{{user_email}}",
+							"host": ["{{base_url}}"],
+							"path": ["user", "{{user_email}}"]
+						}
+					}
+				},
+				{
+					"name": "Upgrade to Premium",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"{{user_email}}\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/user/upgrade",
+							"host": ["{{base_url}}"],
+							"path": ["user", "upgrade"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "QR Code",
+			"item": [
+				{
+					"name": "Generate QR Code",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"John Doe\",\n    \"email\": \"john.doe@example.com\",\n    \"address\": \"123 Main St, City, State 12345\",\n    \"phone\": \"+1234567890\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/qr/generate",
+							"host": ["{{base_url}}"],
+							"path": ["qr", "generate"]
+						}
+					}
+				},
+				{
+					"name": "Get QR Code Info",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/qr/{{qr_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["qr", "{{qr_id}}"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Call",
+			"item": [
+				{
+					"name": "Initiate Call",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"qrId\": \"{{qr_id}}\",\n    \"callerPhone\": \"+1987654321\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/call/initiate",
+							"host": ["{{base_url}}"],
+							"path": ["call", "initiate"]
+						}
+					}
+				},
+				{
+					"name": "Connect Call (Webhook)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/call/connect/%2B1234567890",
+							"host": ["{{base_url}}"],
+							"path": ["call", "connect", "%2B1234567890"]
+						}
+					}
+				},
+				{
+					"name": "Call Status (Webhook)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "CallSid",
+									"value": "CAxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+									"type": "text"
+								},
+								{
+									"key": "CallStatus",
+									"value": "completed",
+									"type": "text"
+								},
+								{
+									"key": "CallDuration",
+									"value": "120",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/call/status",
+							"host": ["{{base_url}}"],
+							"path": ["call", "status"]
+						}
+					}
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "https://parking-qr-xage.onrender.com/api",
+			"type": "string"
+		},
+		{
+			"key": "user_email",
+			"value": "test@example.com",
+			"type": "string"
+		},
+		{
+			"key": "qr_id",
+			"value": "your-qr-code-id-here",
+			"type": "string"
+		}
+	]
+}
+

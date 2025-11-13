@@ -33,7 +33,7 @@ export class TwilioService {
       const formattedOwner = ownerPhone.startsWith('+') ? ownerPhone : `+${ownerPhone.replace(/\D/g, '')}`;
 
       // Get base URL for webhooks
-      const baseUrl = process.env.BASE_URL || 'http://localhost:3001';
+      const baseUrl = process.env.BASE_URL || 'https://parking-qr-xage.onrender.com';
       
       // Create the call - Twilio will call the caller first
       // When they answer, Twilio will execute the TwiML to connect to owner

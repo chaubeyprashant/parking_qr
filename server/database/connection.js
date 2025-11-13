@@ -11,7 +11,8 @@ export const connectDB = async () => {
 
   try {
     const mongoURI = config.database.connectionString;
-    
+    console.log(mongoURI);
+
     if (!mongoURI) {
       throw new Error('MongoDB connection string is not configured. Set MONGODB_URI environment variable.');
     }
