@@ -18,7 +18,7 @@ services:
       - key: MONGODB_URI
         sync: false
       - key: CORS_ORIGIN
-        value: https://parking-qr-xage.onrender.com
+        value: '*'
       - key: BASE_URL
         value: https://parking-qr-xage.onrender.com
       - key: TWILIO_ACCOUNT_SID

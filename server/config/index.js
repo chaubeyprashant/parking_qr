@@ -28,7 +28,22 @@ export const config = {
     }
   },
   cors: {
-    origin: process.env.CORS_ORIGIN || '*',
+    origin: (() => {
+      const corsOrigin = process.env.CORS_ORIGIN || '*';
+      
+      // If '*' or development, allow all origins
+      if (corsOrigin === '*' || config.nodeEnv === 'development') {
+        return true;
+      }
+      
+      // If comma-separated list, return array
+      if (corsOrigin.includes(',')) {
+        return corsOrigin.split(',').map(o => o.trim());
+      }
+      
+      // Single origin
+      return corsOrigin;
+    })(),
     credentials: true
   },
   twilio: {
